@@ -107,7 +107,7 @@ namespace MailKit.Net.Imap {
 		public Exception Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
 		public string ResponseText { get; internal set; }
-		public ImapFolder Folder { get; private set; }
+		public ImapFolder? Folder { get; private set; }
 		public object UserData { get; internal set; }
 		public bool ListReturnsSubscribed { get; internal set; }
 		public bool Logout { get; private set; }
@@ -140,7 +140,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para><paramref name="format"/> is <see langword="null" />.</para>
 		/// </exception>
-		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
+		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder? folder, FormatOptions options, string format, params object[] args)
 		{
 			if (engine == null)
 				throw new ArgumentNullException (nameof (engine));
@@ -264,7 +264,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para><paramref name="format"/> is <see langword="null" />.</para>
 		/// </exception>
-		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
+		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder? folder, string format, params object[] args)
 			: this (engine, cancellationToken, folder, FormatOptions.Default, format, args)
 		{
 		}

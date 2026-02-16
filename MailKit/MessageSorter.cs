@@ -93,7 +93,7 @@ namespace MailKit {
 				return n1 ? 1 : (n2 ? -1  : 0);
 			}
 
-			public int Compare (T x, T y)
+			public int Compare (T? x, T? y)
 			{
 				int cmp = 0;
 

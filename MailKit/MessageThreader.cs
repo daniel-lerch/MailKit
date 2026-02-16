@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -51,14 +52,15 @@ namespace MailKit {
 		internal class ThreadableNode : IMessageSummary
 		{
 			public readonly List<ThreadableNode> Children = new List<ThreadableNode> ();
-			public IMessageSummary Message;
-			public ThreadableNode Parent;
+			public IMessageSummary? Message;
+			public ThreadableNode? Parent;
 
-			public ThreadableNode (IMessageSummary message)
+			public ThreadableNode (IMessageSummary? message)
 			{
 				Message = message;
 			}
 
+			[MemberNotNullWhen (true, nameof (Parent))]
 			public bool HasParent {
 				get { return Parent != null; }
 			}
@@ -67,23 +69,23 @@ namespace MailKit {
 				get { return Children.Count > 0; }
 			}
 
-			public IMailFolder Folder => null;
+			public IMailFolder? Folder => null;
 
 			public MessageSummaryItems Fields {
 				get { return MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.ModSeq | MessageSummaryItems.Size; }
 			}
 
-			public BodyPart Body => null;
+			public BodyPart? Body => null;
 
-			public BodyPartText TextBody => null;
+			public BodyPartText? TextBody => null;
 
-			public BodyPartText HtmlBody => null;
+			public BodyPartText? HtmlBody => null;
 
 			public IEnumerable<BodyPartBasic> BodyParts => null;
 
 			public IEnumerable<BodyPartBasic> Attachments => null;
 
-			public string PreviewText => null;
+			public string? PreviewText => null;
 
 			public Envelope Envelope {
 				get { return Message != null ? Message.Envelope : Children[0].Envelope; }
@@ -105,11 +107,11 @@ namespace MailKit {
 
 			public IReadOnlySetOfStrings Keywords => null;
 
-			public IReadOnlyList<Annotation> Annotations {
+			public IReadOnlyList<Annotation>? Annotations {
 				get { return Message != null ? Message.Annotations : Children[0].Annotations; }
 			}
 
-			public HeaderList Headers => null;
+			public HeaderList? Headers => null;
 
 			public DateTimeOffset? InternalDate => null;
 
@@ -123,13 +125,13 @@ namespace MailKit {
 				get { return Message != null ? Message.ModSeq : Children[0].ModSeq; }
 			}
 
-			public MessageIdList References {
+			public MessageIdList? References {
 				get { return Message != null ? Message.References : Children[0].References; }
 			}
 
-			public string EmailId => null;
+			public string? EmailId => null;
 
-			public string ThreadId => null;
+			public string? ThreadId => null;
 
 			public UniqueId UniqueId {
 				get { return Message != null ? Message.UniqueId : Children[0].UniqueId; }
@@ -143,7 +145,7 @@ namespace MailKit {
 
 			public ulong? GMailThreadId => null;
 
-			public IList<string> GMailLabels => null;
+			public IList<string>? GMailLabels => null;
 		}
 
 		static Dictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
@@ -176,7 +178,7 @@ namespace MailKit {
 					ids.Add (id, node);
 				}
 
-				ThreadableNode parent = null;
+				ThreadableNode? parent = null;
 				foreach (var reference in message.References) {
 					if (!ids.TryGetValue (reference, out var referenced)) {
 						// create a dummy container for the referenced message
@@ -258,7 +260,7 @@ namespace MailKit {
 		static void GroupBySubject (ThreadableNode root)
 		{
 			var subjects = new Dictionary<string, ThreadableNode> (StringComparer.OrdinalIgnoreCase);
-			ThreadableNode match;
+			ThreadableNode? match;
 			int count = 0;
 
 			for (int i = 0; i < root.Children.Count; i++) {

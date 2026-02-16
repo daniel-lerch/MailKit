@@ -51,6 +51,11 @@
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
+  <!-- Disable nullable warnings in .NET Framework and netstandard2.0 -->
+  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' ">
+    <NoWarn>CS8601;CS8602;CS8604</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
   </PropertyGroup>
@@ -145,6 +150,7 @@
     <Compile Include="Net\SocketMetrics.cs" />
     <Compile Include="Net\SocketUtils.cs" />
     <Compile Include="Net\SslStream.cs" />
+    <Compile Include="NullableAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AnnotationSearchQuery.cs" />
     <Compile Include="Search\BinarySearchQuery.cs" />

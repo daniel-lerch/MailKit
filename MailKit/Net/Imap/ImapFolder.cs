@@ -5356,7 +5356,7 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		void GetCopiedUids (ImapCommand ic, ref UniqueIdSet src, ref UniqueIdSet dest)
+		void GetCopiedUids (ImapCommand ic, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
@@ -5371,7 +5371,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			ProcessCopyToResponse (ic, destination);
 
@@ -5443,8 +5443,8 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
 				Engine.Run (ic);
@@ -5523,8 +5523,8 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -5625,8 +5625,8 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
 				Engine.Run (ic);
@@ -5720,8 +5720,8 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -5743,7 +5743,7 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		ImapCommand QueueCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand? QueueCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -5890,7 +5890,7 @@ namespace MailKit.Net.Imap {
 			ProcessCopyToResponse (ic, destination);
 		}
 
-		ImapCommand QueueMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand? QueueMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 

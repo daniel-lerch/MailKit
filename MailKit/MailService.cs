@@ -791,7 +791,7 @@ namespace MailKit {
 			if (!protocol.Equals (Protocol, StringComparison.OrdinalIgnoreCase))
 				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
 
-			if (query.TryGetValue ("starttls", out string value)) {
+			if (query.TryGetValue ("starttls", out string? value)) {
 				if (IsAny (value, "always", "true", "yes"))
 					return SecureSocketOptions.StartTls;
 
@@ -1617,7 +1617,7 @@ namespace MailKit {
 		/// The <see cref="Connected"/> event is raised when the client
 		/// successfully connects to the mail server.
 		/// </remarks>
-		public event EventHandler<ConnectedEventArgs> Connected;
+		public event EventHandler<ConnectedEventArgs>? Connected;
 
 		/// <summary>
 		/// Raise the connected event.
@@ -1640,7 +1640,7 @@ namespace MailKit {
 		/// The <see cref="Disconnected"/> event is raised whenever the client
 		/// gets disconnected.
 		/// </remarks>
-		public event EventHandler<DisconnectedEventArgs> Disconnected;
+		public event EventHandler<DisconnectedEventArgs>? Disconnected;
 
 		/// <summary>
 		/// Raise the disconnected event.
@@ -1664,7 +1664,7 @@ namespace MailKit {
 		/// The <see cref="Authenticated"/> event is raised whenever the client
 		/// has been authenticated.
 		/// </remarks>
-		public event EventHandler<AuthenticatedEventArgs> Authenticated;
+		public event EventHandler<AuthenticatedEventArgs>? Authenticated;
 
 		/// <summary>
 		/// Raise the authenticated event.

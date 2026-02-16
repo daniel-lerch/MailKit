@@ -86,7 +86,7 @@ namespace MailKit {
 		/// Visits the message contained within a message/rfc822 or message/news MIME entity.
 		/// </remarks>
 		/// <param name="message">The body part representing the message/rfc822 message.</param>
-		protected virtual void VisitMessage (BodyPart message)
+		protected virtual void VisitMessage (BodyPart? message)
 		{
 			message?.Accept (this);
 		}

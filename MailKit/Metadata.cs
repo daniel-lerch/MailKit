@@ -33,7 +33,7 @@ namespace MailKit {
 	/// </remarks>
 	public class Metadata
 	{
-		internal string EncodedName;
+		internal string? EncodedName;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Metadata"/> class.

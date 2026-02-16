@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 
@@ -119,8 +120,11 @@ namespace MailKit.Net.Imap {
 			DirectorySeparator = directorySeparator;
 		}
 
-		public bool Equals (string x, string y)
+		public bool Equals (string? x, string? y)
 		{
+			if (x == null) 
+				return y == null;
+
 			x = ImapUtils.CanonicalizeMailboxName (x, DirectorySeparator);
 			y = ImapUtils.CanonicalizeMailboxName (y, DirectorySeparator);
 
@@ -148,7 +152,7 @@ namespace MailKit.Net.Imap {
 		static int TagPrefixIndex;
 
 #if NET6_0_OR_GREATER
-		readonly ClientMetrics metrics;
+		readonly ClientMetrics? metrics;
 #endif
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
@@ -158,8 +162,8 @@ namespace MailKit.Net.Imap {
 		readonly List<ImapCommand> queue;
 		long clientConnectedTimestamp;
 		internal char TagPrefix;
-		ImapCommand current;
-		MimeParser parser;
+		ImapCommand? current;
+		MimeParser? parser;
 		internal int Tag;
 		bool disposed;
 
@@ -831,7 +835,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void RecordClientDisconnected (Exception ex)
+		void RecordClientDisconnected (Exception? ex)
 		{
 #if NET6_0_OR_GREATER
 			metrics?.RecordClientDisconnected (clientConnectedTimestamp, Uri, ex);
@@ -846,7 +850,7 @@ namespace MailKit.Net.Imap {
 		/// Disconnects the <see cref="ImapEngine"/>.
 		/// </remarks>
 		/// <param name="ex">The exception that is causing the disconnection.</param>
-		public void Disconnect (Exception ex)
+		public void Disconnect (Exception? ex)
 		{
 			RecordClientDisconnected (ex);
 
@@ -2527,7 +2531,7 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		static bool UpdateSimpleStatusValue (ImapFolder folder, string atom, ImapToken token)
+		static bool UpdateSimpleStatusValue (ImapFolder? folder, string atom, ImapToken token)
 		{
 			uint count, uid;
 			ulong modseq;
@@ -3257,7 +3261,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
-		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
+		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder? folder, FormatOptions options, string format, params object[] args)
 		{
 			var ic = new ImapCommand (this, cancellationToken, folder, options, format, args);
 			QueueCommand (ic);
@@ -3272,7 +3276,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="folder">The folder that the command operates on.</param>
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
-		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
+		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder? folder, string format, params object[] args)
 		{
 			return QueueCommand (cancellationToken, folder, FormatOptions.Default, format, args);
 		}
@@ -3331,12 +3335,12 @@ namespace MailKit.Net.Imap {
 		/// <returns><see langword="true" /> if the folder was retrieved from the cache; otherwise, <see langword="false" />.</returns>
 		/// <param name="encodedName">The encoded folder name.</param>
 		/// <param name="folder">The cached folder.</param>
-		public bool TryGetCachedFolder (string encodedName, out ImapFolder folder)
+		public bool TryGetCachedFolder (string encodedName, [NotNullWhen (true)] out ImapFolder? folder)
 		{
 			return FolderCache.TryGetValue (encodedName, out folder);
 		}
 
-		bool RequiresParentLookup (ImapFolder folder, out string encodedParentName)
+		bool RequiresParentLookup (ImapFolder folder, [NotNullWhen (true)] out string? encodedParentName)
 		{
 			encodedParentName = null;
 
@@ -3554,7 +3558,7 @@ namespace MailKit.Net.Imap {
 			return ic.Response;
 		}
 
-		internal static ImapFolder GetFolder (List<ImapFolder> folders, string encodedName)
+		internal static ImapFolder? GetFolder (List<ImapFolder> folders, string encodedName)
 		{
 			for (int i = 0; i < folders.Count; i++) {
 				if (encodedName.Equals (folders[i].EncodedName, StringComparison.OrdinalIgnoreCase))
@@ -3790,7 +3794,7 @@ namespace MailKit.Net.Imap {
 
 		ImapFolder ProcessGetQuotaRootResponse (ImapCommand ic, string quotaRoot, out List<ImapFolder> list)
 		{
-			ImapFolder folder;
+			ImapFolder? folder;
 
 			list = (List<ImapFolder>) ic.UserData;
 
@@ -3873,7 +3877,7 @@ namespace MailKit.Net.Imap {
 
 		static ImapFolder ProcessGetFolderResponse (ImapCommand ic, string path, string encodedName, out List<ImapFolder> list)
 		{
-			ImapFolder folder;
+			ImapFolder? folder;
 
 			list = (List<ImapFolder>) ic.UserData;
 
@@ -4211,7 +4215,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives an alert message from the server.
 		/// </summary>
-		public event EventHandler<AlertEventArgs> Alert;
+		public event EventHandler<AlertEventArgs>? Alert;
 
 		internal void OnAlert (string message)
 		{
@@ -4221,7 +4225,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a webalert message from the server.
 		/// </summary>
-		public event EventHandler<WebAlertEventArgs> WebAlert;
+		public event EventHandler<WebAlertEventArgs>? WebAlert;
 
 		internal void OnWebAlert (Uri uri, string message)
 		{
@@ -4231,7 +4235,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a notification that a folder has been created.
 		/// </summary>
-		public event EventHandler<FolderCreatedEventArgs> FolderCreated;
+		public event EventHandler<FolderCreatedEventArgs>? FolderCreated;
 
 		internal void OnFolderCreated (IMailFolder folder)
 		{
@@ -4241,7 +4245,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a notification that metadata has changed.
 		/// </summary>
-		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+		public event EventHandler<MetadataChangedEventArgs>? MetadataChanged;
 
 		internal void OnMetadataChanged (Metadata metadata)
 		{
@@ -4251,7 +4255,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a notification overflow message from the server.
 		/// </summary>
-		public event EventHandler<EventArgs> NotificationOverflow;
+		public event EventHandler<EventArgs>? NotificationOverflow;
 
 		internal void OnNotificationOverflow ()
 		{
@@ -4261,7 +4265,7 @@ namespace MailKit.Net.Imap {
 			NotificationOverflow?.Invoke (this, EventArgs.Empty);
 		}
 
-		public event EventHandler<EventArgs> Disconnected;
+		public event EventHandler<EventArgs>? Disconnected;
 
 		void OnDisconnected ()
 		{
