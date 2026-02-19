@@ -59,7 +59,7 @@ namespace MailKit {
 		protected static readonly MessageFlags SettableFlags = MessageFlags.Answered | MessageFlags.Deleted |
 			MessageFlags.Draft | MessageFlags.Flagged | MessageFlags.Seen;
 
-		IMailFolder parent;
+		IMailFolder? parent;
 
 		/// <summary>
 		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
@@ -271,7 +271,7 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The unique folder identifier.</value>
-		public string Id {
+		public string? Id {
 			get; protected set;
 		}
 
@@ -9442,7 +9442,7 @@ namespace MailKit {
 		{
 		}
 
-		void OnParentFolderRenamed (object sender, FolderRenamedEventArgs e)
+		void OnParentFolderRenamed (object? sender, FolderRenamedEventArgs e)
 		{
 			var oldFullName = FullName;
 

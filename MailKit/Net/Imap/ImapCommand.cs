@@ -76,10 +76,10 @@ namespace MailKit.Net.Imap {
 	class ImapCommandPart
 	{
 		public readonly byte[] Command;
-		public readonly ImapLiteral Literal;
+		public readonly ImapLiteral? Literal;
 		public readonly bool WaitForContinuation;
 
-		public ImapCommandPart (byte[] command, ImapLiteral literal, bool wait = true)
+		public ImapCommandPart (byte[] command, ImapLiteral? literal, bool wait = true)
 		{
 			WaitForContinuation = wait;
 			Command = command;
@@ -99,20 +99,20 @@ namespace MailKit.Net.Imap {
 		static readonly byte[] LiteralTokenPrefix = { (byte) '{' };
 
 		public Dictionary<string, ImapUntaggedHandler> UntaggedHandlers { get; private set; }
-		public ImapContinuationHandler ContinuationHandler { get; set; }
+		public ImapContinuationHandler? ContinuationHandler { get; set; }
 		public CancellationToken CancellationToken { get; private set; }
 		public ImapCommandStatus Status { get; internal set; }
 		public ImapCommandResponse Response { get; internal set; }
-		public ITransferProgress Progress { get; internal set; }
-		public Exception Exception { get; internal set; }
+		public ITransferProgress? Progress { get; internal set; }
+		public Exception? Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
-		public string ResponseText { get; internal set; }
+		public string? ResponseText { get; internal set; }
 		public ImapFolder? Folder { get; private set; }
-		public object UserData { get; internal set; }
+		public object? UserData { get; internal set; }
 		public bool ListReturnsSubscribed { get; internal set; }
 		public bool Logout { get; private set; }
 		public bool Lsub { get; internal set; }
-		public string Tag { get; private set; }
+		public string? Tag { get; private set; }
 		public bool Bye { get; internal set; }
 
 		readonly List<ImapCommandPart> parts = new List<ImapCommandPart> ();
@@ -811,7 +811,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="type">The type of response-code.</param>
 		/// <returns>The response-code if it exists; otherwise, <see langword="null" />.</returns>
-		public ImapResponseCode GetResponseCode (ImapResponseCodeType type)
+		public ImapResponseCode? GetResponseCode (ImapResponseCodeType type)
 		{
 			for (int i = 0; i < RespCodes.Count; i++) {
 				if (RespCodes[i].Type == type)

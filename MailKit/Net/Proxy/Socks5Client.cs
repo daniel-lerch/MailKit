@@ -156,7 +156,7 @@ namespace MailKit.Net.Proxy
 			}
 		}
 
-		internal static Socks5AddressType GetAddressType (string host, out IPAddress ip)
+		internal static Socks5AddressType GetAddressType (string host, out IPAddress? ip)
 		{
 			if (!IPAddress.TryParse (host, out ip))
 				return Socks5AddressType.Domain;
@@ -396,7 +396,7 @@ namespace MailKit.Net.Proxy
 
 			var socket = SocketUtils.Connect (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken);
 			var addrType = GetAddressType (host, out var ip);
-			byte[] domain = null;
+			byte[]? domain = null;
 
 			if (addrType == Socks5AddressType.Domain)
 				domain = Encoding.UTF8.GetBytes (host);
@@ -494,7 +494,7 @@ namespace MailKit.Net.Proxy
 
 			var socket = await SocketUtils.ConnectAsync (ProxyHost, ProxyPort, LocalEndPoint, cancellationToken).ConfigureAwait (false);
 			var addrType = GetAddressType (host, out var ip);
-			byte[] domain = null;
+			byte[]? domain = null;
 
 			if (addrType == Socks5AddressType.Domain)
 				domain = Encoding.UTF8.GetBytes (host);

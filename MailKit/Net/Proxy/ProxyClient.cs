@@ -50,7 +50,7 @@ namespace MailKit.Net.Proxy
 	public abstract class ProxyClient : IProxyClient
 	{
 #if NET6_0_OR_GREATER
-		static IProxyClient systemProxy;
+		static IProxyClient? systemProxy;
 
 		/// <summary>
 		/// Get a client for the default system proxy.
@@ -196,7 +196,7 @@ namespace MailKit.Net.Proxy
 				throw new ArgumentOutOfRangeException (nameof (timeout));
 		}
 
-		static void AsyncOperationCompleted (object sender, SocketAsyncEventArgs args)
+		static void AsyncOperationCompleted (object? sender, SocketAsyncEventArgs args)
 		{
 			var tcs = (TaskCompletionSource<bool>) args.UserToken;
 

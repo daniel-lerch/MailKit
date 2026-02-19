@@ -205,7 +205,7 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The unique folder identifier.</value>
-		string Id { get; }
+		string? Id { get; }
 
 		/// <summary>
 		/// Get whether or not the folder is subscribed.

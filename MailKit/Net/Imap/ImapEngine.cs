@@ -442,7 +442,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the selected folder.
 		/// </remarks>
 		/// <value>The selected folder.</value>
-		public ImapFolder Selected {
+		public ImapFolder? Selected {
 			get; internal set;
 		}
 
@@ -627,7 +627,7 @@ namespace MailKit.Net.Imap {
 			Stream = stream;
 		}
 
-		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind, Uri uri = null)
+		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind, Uri? uri = null)
 		{
 #if NET6_0_OR_GREATER
 			return NetworkOperation.Start (kind, uri ?? Uri, Telemetry.ImapClient.ActivitySource, metrics);

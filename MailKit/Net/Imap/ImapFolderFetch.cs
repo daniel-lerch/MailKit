@@ -32,6 +32,7 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.IO;
@@ -93,7 +94,7 @@ namespace MailKit.Net.Imap
 					Messages.Add (message);
 			}
 
-			public bool TryGetValue (int index, out MessageSummary? message)
+			public bool TryGetValue (int index, [NotNullWhen (true)] out MessageSummary? message)
 			{
 				int i;
 
@@ -107,7 +108,7 @@ namespace MailKit.Net.Imap
 				return true;
 			}
 
-			public void OnMessageExpunged (object sender, MessageEventArgs args)
+			public void OnMessageExpunged (object? sender, MessageEventArgs args)
 			{
 				int index = BinarySearch (args.Index, false);
 
@@ -1830,7 +1831,7 @@ namespace MailKit.Net.Imap
 				return Task.CompletedTask;
 			}
 
-			public virtual bool Contains (int index, string specifier, out Section? section)
+			public virtual bool Contains (int index, string specifier, [NotNullWhen (true)] out Section? section)
 			{
 				section = null;
 				return false;
@@ -1877,7 +1878,7 @@ namespace MailKit.Net.Imap
 				Sections.Add (section);
 			}
 
-			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
+			public bool TryGetSection (UniqueId uid, string specifier, [NotNullWhen (true)] out Section? section, bool remove = false)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					var item = Sections[i];
@@ -1899,7 +1900,7 @@ namespace MailKit.Net.Imap
 				return false;
 			}
 
-			public bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
+			public bool TryGetSection (int index, string specifier, [NotNullWhen (true)] out Section? section, bool remove = false)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					var item = Sections[i];
@@ -2501,7 +2502,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, out Section section)
+		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -2641,7 +2642,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, out Section section)
+		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -2895,7 +2896,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, int index, out Section section)
+		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, int index, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3035,7 +3036,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, out Section section)
+		void ProcessGetHeadersResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3289,7 +3290,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetMessageResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, out Section section)
+		void ProcessGetMessageResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3425,7 +3426,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetMessageResponse (ImapCommand ic, FetchStreamContext ctx, int index, out Section section)
+		void ProcessGetMessageResponse (ImapCommand ic, FetchStreamContext ctx, int index, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3545,7 +3546,7 @@ namespace MailKit.Net.Imap
 			return await ParseMessageAsync (section.Stream, cancellationToken).ConfigureAwait (false);
 		}
 
-		ImapCommand QueueGetBodyPartCommand (UniqueId uid, string partSpecifier, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx, out string[] tags)
+		ImapCommand QueueGetBodyPartCommand (UniqueId uid, string partSpecifier, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext ctx, out string[] tags)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -3565,7 +3566,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, out ChainedStream chained, out bool dispose)
+		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, [NotNull] out ChainedStream? chained, out bool dispose)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3878,7 +3879,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, out ChainedStream chained, out bool dispose)
+		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, [NotNull] out ChainedStream? chained, out bool dispose)
 		{
 			ProcessFetchResponse (ic);
 
@@ -4148,7 +4149,7 @@ namespace MailKit.Net.Imap
 			return GetBodyPartAsync (index, part.PartSpecifier, cancellationToken, progress);
 		}
 
-		ImapCommand? QueueGetStreamCommand (UniqueId uid, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (UniqueId uid, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -4162,20 +4163,21 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			if (count == 0) {
+				ic = null;
 				ctx = null;
-				return null;
+				return false;
 			}
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
 			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
-		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, out Section section)
+		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -4235,9 +4237,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section section;
@@ -4305,9 +4305,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section section;
@@ -4323,7 +4321,7 @@ namespace MailKit.Net.Imap
 			return section.Stream;
 		}
 
-		ImapCommand? QueueGetStreamCommand (int index, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (int index, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4337,20 +4335,21 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			if (count == 0) {
+				ic = null;
 				ctx = null;
-				return null;
+				return false;
 			}
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
+			ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
 			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
-		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, int index, out Section section)
+		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, int index, [NotNull] out Section? section)
 		{
 			ProcessFetchResponse (ic);
 
@@ -4409,9 +4408,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section section;
@@ -4478,9 +4475,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section section;
@@ -4516,7 +4511,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string section, out Section s)
+		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string section, [NotNull] out Section? s)
 		{
 			ProcessFetchResponse (ic);
 
@@ -4654,7 +4649,7 @@ namespace MailKit.Net.Imap
 			return s.Stream;
 		}
 
-		ImapCommand? QueueGetStreamCommand (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -4671,19 +4666,20 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			if (count == 0) {
+				ic = null;
 				ctx = null;
-				return null;
+				return false;
 			}
 
 			var range = string.Format (CultureInfo.InvariantCulture, "{0}.{1}", offset, count);
 			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}>)\r\n", uid, section, range);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			ic = new ImapCommand (Engine, cancellationToken, this, command);
 			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
 		/// <summary>
@@ -4744,9 +4740,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section s;
@@ -4820,9 +4814,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section s;
@@ -4859,7 +4851,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, int index, string section, out Section s)
+		void ProcessGetStreamResponse (ImapCommand ic, FetchStreamContext ctx, int index, string section, [NotNull] out Section? s)
 		{
 			ProcessFetchResponse (ic);
 
@@ -4991,7 +4983,7 @@ namespace MailKit.Net.Imap
 			return s.Stream;
 		}
 
-		ImapCommand? QueueGetStreamCommand (int index, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (int index, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -5008,21 +5000,22 @@ namespace MailKit.Net.Imap
 			CheckState (true, false);
 
 			if (count == 0) {
+				ic = null;
 				ctx = null;
-				return null;
+				return false;
 			}
 
 			var seqid = (index + 1).ToString (CultureInfo.InvariantCulture);
 			var range = string.Format (CultureInfo.InvariantCulture, "{0}.{1}", offset, count);
 			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}>)\r\n", seqid, section, range);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			ic = new ImapCommand (Engine, cancellationToken, this, command);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchStreamHandler);
 			ic.UserData = ctx = new FetchStreamContext (progress);
 
 			Engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
 		/// <summary>
@@ -5082,9 +5075,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section s;
@@ -5157,9 +5148,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
-			var ic = QueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ctx);
-
-			if (ic == null)
+			if (!TryQueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
 
 			Section s;

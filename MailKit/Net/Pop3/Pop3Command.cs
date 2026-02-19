@@ -52,18 +52,18 @@ namespace MailKit.Net.Pop3 {
 
 	class Pop3Command
 	{
-		public Pop3CommandHandler Handler { get; private set; }
+		public Pop3CommandHandler? Handler { get; private set; }
 		public Encoding Encoding { get; private set; }
 		public string Command { get; private set; }
 
 		// output
 		public Pop3CommandStatus Status { get; internal set; }
-		public ProtocolException Exception { get; set; }
-		public string StatusText { get; set; }
+		public ProtocolException? Exception { get; set; }
+		public string? StatusText { get; set; }
 
-		public object UserData { get; set; }
+		public object? UserData { get; set; }
 
-		public Pop3Command (Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
+		public Pop3Command (Pop3CommandHandler? handler, Encoding encoding, string format, params object[] args)
 		{
 			Command = string.Format (CultureInfo.InvariantCulture, format, args);
 			Encoding = encoding;

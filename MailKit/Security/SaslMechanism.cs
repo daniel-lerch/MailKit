@@ -31,6 +31,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication.ExtendedProtection;
 
 using MailKit.Net;
@@ -264,7 +265,7 @@ namespace MailKit.Security {
 		/// Gets or sets the channel-binding context.
 		/// </remarks>
 		/// <value>The channel-binding context.</value>
-		internal IChannelBindingContext ChannelBindingContext {
+		internal IChannelBindingContext? ChannelBindingContext {
 			get; set;
 		}
 
@@ -275,7 +276,7 @@ namespace MailKit.Security {
 		/// Gets or sets the URI of the service.
 		/// </remarks>
 		/// <value>The URI of the service.</value>
-		internal Uri Uri {
+		internal Uri? Uri {
 			get; set;
 		}
 
@@ -289,7 +290,7 @@ namespace MailKit.Security {
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="channelBinding">A buffer containing the channel-binding.</param>
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
-		protected bool TryGetChannelBinding (ChannelBindingKind kind, out ChannelBinding channelBinding)
+		protected bool TryGetChannelBinding (ChannelBindingKind kind, [NotNullWhen (true)] out ChannelBinding? channelBinding)
 		{
 			if (ChannelBindingContext == null) {
 				channelBinding = null;
@@ -309,7 +310,7 @@ namespace MailKit.Security {
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="token">A buffer containing the channel-binding token.</param>
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
-		protected bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token)
+		protected bool TryGetChannelBindingToken (ChannelBindingKind kind, [NotNullWhen (true)] out byte[]? token)
 		{
 			if (ChannelBindingContext == null) {
 				token = null;
@@ -319,9 +320,9 @@ namespace MailKit.Security {
 			return ChannelBindingContext.TryGetChannelBindingToken (kind, out token);
 		}
 
-		static byte[] Base64Decode (string token, out int length)
+		static byte[]? Base64Decode (string? token, out int length)
 		{
-			byte[] decoded = null;
+			byte[]? decoded = null;
 
 			length = 0;
 
@@ -336,7 +337,7 @@ namespace MailKit.Security {
 			return decoded;
 		}
 
-		static string Base64Encode (byte[] challenge)
+		static string Base64Encode (byte[]? challenge)
 		{
 			if (challenge == null || challenge.Length == 0)
 				return string.Empty;
@@ -517,7 +518,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
-		public static SaslMechanism Create (string mechanism, Encoding encoding, NetworkCredential credentials)
+		public static SaslMechanism? Create (string mechanism, Encoding encoding, NetworkCredential credentials)
 		{
 			if (mechanism == null)
 				throw new ArgumentNullException (nameof (mechanism));
@@ -568,7 +569,7 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
-		public static SaslMechanism Create (string mechanism, NetworkCredential credentials)
+		public static SaslMechanism? Create (string mechanism, NetworkCredential credentials)
 		{
 			return Create (mechanism, Encoding.UTF8, credentials);
 		}

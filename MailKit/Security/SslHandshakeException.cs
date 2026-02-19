@@ -135,7 +135,7 @@ namespace MailKit.Security
 		/// Gets the server's SSL certificate, if it is available.
 		/// </remarks>
 		/// <value>The server's SSL certificate.</value>
-		public X509Certificate ServerCertificate {
+		public X509Certificate? ServerCertificate {
 			get; private set;
 		}
 
@@ -146,7 +146,7 @@ namespace MailKit.Security
 		/// Gets the certificate for the Root Certificate Authority, if it is available.
 		/// </remarks>
 		/// <value>The Root Certificate Authority certificate.</value>
-		public X509Certificate RootCertificateAuthority {
+		public X509Certificate? RootCertificateAuthority {
 			get; private set;
 		}
 
@@ -184,11 +184,11 @@ namespace MailKit.Security
 		}
 #endif
 
-		internal static SslHandshakeException Create (ref SslCertificateValidationInfo validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
+		internal static SslHandshakeException Create (ref SslCertificateValidationInfo? validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{
 			var message = new StringBuilder (DefaultMessage);
-			X509Certificate2 certificate = null;
-			X509Certificate2 root = null;
+			X509Certificate2? certificate = null;
+			X509Certificate2? root = null;
 
 			if (ex is AggregateException aggregate) {
 				aggregate = aggregate.Flatten ();
@@ -370,7 +370,7 @@ namespace MailKit.Security
 		public readonly X509ChainStatus[] ChainStatus;
 		public readonly SslPolicyErrors SslPolicyErrors;
 		public readonly X509Certificate2 Certificate;
-		public readonly string Host;
+		public readonly string? Host;
 
 		public SslCertificateValidationInfo (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{

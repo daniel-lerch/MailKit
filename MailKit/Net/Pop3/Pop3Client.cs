@@ -962,7 +962,7 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				var saslUri = new Uri ("pop://" + engine.Uri.Host);
-				string userName, password, message = null;
+				string? userName, password, message = null;
 				NetworkCredential cred;
 
 				if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
@@ -1555,11 +1555,11 @@ namespace MailKit.Net.Pop3 {
 			SendCommand (cancellationToken, "NOOP\r\n");
 		}
 
-		void OnEngineDisconnected (object sender, EventArgs e)
+		void OnEngineDisconnected (object? sender, EventArgs e)
 		{
 			var options = SecureSocketOptions.None;
 			bool requested = disconnecting;
-			string host = null;
+			string? host = null;
 			int port = 0;
 
 			if (engine.Uri != null) {

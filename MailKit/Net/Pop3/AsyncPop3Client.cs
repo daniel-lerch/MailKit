@@ -227,7 +227,7 @@ namespace MailKit.Net.Pop3
 
 			try {
 				var saslUri = new Uri ("pop://" + engine.Uri.Host);
-				string userName, password, message = null;
+				string? userName, password, message = null;
 				NetworkCredential cred;
 
 				if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
@@ -251,7 +251,7 @@ namespace MailKit.Net.Pop3
 
 				if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
 					foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
-						SaslMechanism sasl;
+						SaslMechanism? sasl;
 
 						cred = credentials.GetCredential (saslUri, authmech);
 

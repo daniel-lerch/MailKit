@@ -30,6 +30,7 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 
@@ -84,6 +85,7 @@ namespace MailKit.Net.Imap {
 			InitializeProperties (args);
 		}
 
+		[MemberNotNull (nameof (EncodedName), nameof (Engine))]
 		void InitializeProperties (ImapFolderConstructorArgs args)
 		{
 			DirectorySeparator = args.DirectorySeparator;
@@ -242,7 +244,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void ProcessResponseCodes (ImapCommand ic, IMailFolder folder, bool throwNotFound = true)
+		void ProcessResponseCodes (ImapCommand ic, IMailFolder? folder, bool throwNotFound = true)
 		{
 			bool tryCreate = false;
 
@@ -1623,7 +1625,7 @@ namespace MailKit.Net.Imap {
 			ProcessUnsubscribeResponse (ic);
 		}
 
-		ImapCommand QueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder> list, out bool status)
+		ImapCommand? QueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder>? list, out bool status)
 		{
 			CheckState (false, false);
 
@@ -1895,9 +1897,9 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		ImapFolder ProcessGetSubfolderResponse (ImapCommand ic, List<ImapFolder> list, string encodedName)
+		ImapFolder? ProcessGetSubfolderResponse (ImapCommand ic, List<ImapFolder> list, string encodedName)
 		{
-			ImapFolder folder;
+			ImapFolder? folder;
 
 			ProcessResponseCodes (ic, null);
 
@@ -2134,7 +2136,7 @@ namespace MailKit.Net.Imap {
 			ProcessCheckResponse (ic);
 		}
 
-		ImapCommand QueueStatusCommand (StatusItems items, CancellationToken cancellationToken)
+		ImapCommand? QueueStatusCommand (StatusItems items, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
@@ -3196,7 +3198,7 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		string ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
+		string? ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
 		{
 			var metadata = (MetadataCollection) ic.UserData;
 
@@ -3204,7 +3206,7 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("GETMETADATA");
 
-			string value = null;
+			string? value = null;
 
 			for (int i = 0; i < metadata.Count; i++) {
 				if (metadata[i].EncodedName == EncodedName && metadata[i].Tag.Id == tag.Id) {
@@ -3480,7 +3482,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		ImapCommand QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
+		ImapCommand? QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -3840,7 +3842,7 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		bool TryProcessGetQuotaResponse (ImapCommand ic, out string encodedName, out Quota quota)
+		bool TryProcessGetQuotaResponse (ImapCommand ic, [NotNullWhen (true)] out string? encodedName, [NotNullWhen (true)] out Quota? quota)
 		{
 			var ctx = (QuotaContext) ic.UserData;
 
